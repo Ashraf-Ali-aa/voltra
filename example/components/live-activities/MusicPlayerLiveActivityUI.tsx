@@ -1,7 +1,7 @@
 import React from 'react'
 import { Voltra } from 'voltra'
 
-type Song = {
+export type Song = {
   title: string
   artist: string
   image: string
@@ -82,6 +82,3 @@ export function MusicPlayerLiveActivityUI({ currentSong, isPlaying }: MusicPlaye
     </Voltra.VStack>
   )
 }
-
-export { SONGS }
-export type { Song }

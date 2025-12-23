@@ -11,17 +11,9 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ['build/*', 'plugin/build/*'],
+    ignores: ['build/*', 'plugin/build/*', 'website/doc_build/*'],
   },
   defineConfig([
-    {
-      files: ['example/webpack.config.js'],
-      languageOptions: {
-        globals: {
-          __dirname: 'readonly',
-        },
-      },
-    },
     {
       basePath: 'example',
       settings: {
@@ -33,6 +25,14 @@ module.exports = defineConfig([
             ],
             extensions: ['.ts', '.tsx', '.js', '.jsx'],
           },
+        },
+      },
+    },
+    {
+      files: ['**/babel.config.js'],
+      languageOptions: {
+        globals: {
+          __dirname: 'readonly',
         },
       },
     },

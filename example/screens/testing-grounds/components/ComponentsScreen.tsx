@@ -292,8 +292,8 @@ export default function ComponentsScreen() {
     <>
       <Text style={styles.heading}>Components Showcase</Text>
       <Text style={styles.subheading}>
-        Explore all available Voltra components. Each example demonstrates the component's functionality and styling
-        capabilities within Live Activities.
+        Explore all available Voltra components. Each example demonstrates the component&apos;s functionality and
+        styling capabilities within Live Activities.
       </Text>
     </>
   )

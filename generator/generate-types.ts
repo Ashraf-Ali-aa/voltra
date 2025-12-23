@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import { execSync } from 'node:child_process'
 
-import { generateSwiftParameters } from './generators/swift-parameters'
-import { generateTypeScriptJSX } from './generators/typescript-jsx'
 import { generateComponentIds } from './generators/component-ids'
 import { generateShortNames } from './generators/short-names'
+import { generateSwiftParameters } from './generators/swift-parameters'
+import { generateTypeScriptJSX } from './generators/typescript-jsx'
 import type { ComponentsData } from './types'
 import { validateComponentsSchema } from './validate-components'
 
 const ROOT_DIR = path.join(__dirname, '..')
 const COMPONENTS_DATA_PATH = path.join(ROOT_DIR, 'data/components.json')
 const TS_PROPS_OUTPUT_DIR = path.join(ROOT_DIR, 'src/jsx/props')
-const TS_JSX_OUTPUT_DIR = path.join(ROOT_DIR, 'src/jsx')
 const TS_PAYLOAD_OUTPUT_DIR = path.join(ROOT_DIR, 'src/payload')
 const SWIFT_GENERATED_DIR = path.join(ROOT_DIR, 'ios/ui/Generated')
 const SWIFT_PARAMETERS_OUTPUT_DIR = path.join(SWIFT_GENERATED_DIR, 'Parameters')

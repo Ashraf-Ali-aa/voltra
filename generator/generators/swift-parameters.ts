@@ -32,10 +32,7 @@ const toSwiftType = (param: ComponentParameter): string => {
 
 const generateParameterStruct = (component: ComponentDefinition, version: string): string => {
   const params = Object.entries(component.parameters)
-
-  // Separate params with and without defaults
   const paramsWithDefaults = params.filter(([_, param]) => param.default !== undefined)
-  const paramsWithoutDefaults = params.filter(([_, param]) => param.default === undefined)
 
   const header = `//
 //  ${component.name}Parameters.swift

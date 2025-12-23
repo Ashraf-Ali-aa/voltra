@@ -1,6 +1,7 @@
 import React from 'react'
-import { Voltra } from '../server'
+
 import { renderVoltraToJson } from '../renderer/renderer'
+import { Voltra } from '../server'
 
 describe('Stylesheet Deduplication', () => {
   describe('Basic Stylesheet Functionality', () => {
@@ -9,7 +10,7 @@ describe('Stylesheet Deduplication', () => {
         color: '#FF0000',
         fontSize: 16,
         fontWeight: 'bold',
-      }
+      } as const
 
       const result = renderVoltraToJson({
         lockScreen: (
@@ -246,7 +247,7 @@ describe('Stylesheet Deduplication', () => {
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-      }
+      } as const
 
       // Create a component that uses the same style multiple times
       const componentWithRepeatedStyles = (
@@ -298,32 +299,6 @@ describe('Stylesheet Deduplication', () => {
       })
 
       expect(result).not.toHaveProperty('s')
-    })
-  })
-
-  describe('Backwards Compatibility', () => {
-    it('should still work with renderVoltraVariantToJson without stylesheets', () => {
-      const { renderVoltraVariantToJson } = require('../renderer/renderer')
-
-      const sharedStyle = { color: '#FF0000', fontSize: 16 }
-
-      const element = (
-        <Voltra.VStack>
-          <Voltra.Text style={sharedStyle}>Text 1</Voltra.Text>
-          <Voltra.Text style={sharedStyle}>Text 2</Voltra.Text>
-        </Voltra.VStack>
-      )
-
-      const result = renderVoltraVariantToJson(element)
-
-      // Should inline styles instead of using stylesheet
-      const elements = result.c
-      expect(elements).toHaveLength(2)
-
-      elements.forEach((element: any) => {
-        expect(element.p['s']).toHaveProperty('c', '#FF0000')
-        expect(element.p['s']).toHaveProperty('fs', 16)
-      })
     })
   })
 

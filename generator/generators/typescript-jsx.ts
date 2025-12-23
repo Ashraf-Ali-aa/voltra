@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react'
-
 import type { ComponentDefinition, ComponentParameter, ComponentsData } from '../types'
 
 type GeneratedFiles = {
