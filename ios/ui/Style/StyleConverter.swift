@@ -1,6 +1,5 @@
 import SwiftUI
 
-// TODO: Refactor to NOT overwrite defaults.
 enum StyleConverter {
   static func convert(_ js: [String: Any]) -> (LayoutStyle, DecorationStyle, RenderingStyle, TextStyle) {
     (parseLayout(js), parseDecoration(js), parseRendering(js), parseText(js))
@@ -12,9 +11,9 @@ enum StyleConverter {
     let flexGrow = JSStyleParser.number(js["flexGrow"]) ?? 0
     let finalFlex = max(flexVal, flexGrow)
 
-    // If it flexes, give it priority 1 so it beats fixed items (default 0).
-    // Do NOT use the raw value (e.g. 2.0), or it will eat other flex items.
-    let priority: Double = finalFlex > 0 ? 1.0 : 0.0
+    // If it flexes, give it priority 1 so it beats fixed items.
+    // Only set layoutPriority when flex is active; nil means "don't apply modifier".
+    let priority: Double? = finalFlex > 0 ? 1.0 : nil
 
     // Position parsing (offsetX/offsetY -> CGPoint)
     var position: CGPoint?
@@ -26,8 +25,8 @@ enum StyleConverter {
       position = CGPoint(x: 0, y: offsetY)
     }
 
-    // zIndex parsing
-    let zIndex = JSStyleParser.number(js["zIndex"]) ?? 0.0
+    // zIndex: only set if explicitly provided in JS
+    let zIndex = JSStyleParser.number(js["zIndex"])
 
     return LayoutStyle(
       // Dimensions
