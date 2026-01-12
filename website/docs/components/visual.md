@@ -97,3 +97,32 @@ A linear gradient background that can contain children. Creates a gradient effec
 **Apple Documentation:** [LinearGradient](https://developer.apple.com/documentation/swiftui/lineargradient)
 
 ---
+
+### Mask
+
+Masks content using any Voltra element as the mask shape. The alpha channel of the mask element determines visibility - opaque areas show the content, transparent areas hide it.
+
+**Parameters:**
+
+- `maskElement` (ReactNode, **required**): The Voltra element used as the mask shape
+
+**Platform Requirements:** iOS 15.0+, macOS 12.0+
+
+**Example:**
+
+```tsx
+// Text-shaped mask revealing a gradient
+<Voltra.Mask maskElement={<Voltra.Text style={{ fontSize: 48, fontWeight: 'bold' }}>HELLO</Voltra.Text>}>
+  <Voltra.LinearGradient
+    colors="#FF6B6B|#4ECDC4|#A855F7"
+    startPoint="leading"
+    endPoint="trailing"
+  />
+</Voltra.Mask>
+```
+
+The children of the Mask component are the content to be masked, while `maskElement` defines the shape through which the content is visible.
+
+**Apple Documentation:** [View.mask](https://developer.apple.com/documentation/swiftui/view/mask(alignment:_:))
+
+---
