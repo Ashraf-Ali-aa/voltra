@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { renderWidgetToString } from 'voltra/server'
 
 import type { WidgetConfig } from '../../../../types'
 import { logger } from '../../../../utils'
@@ -23,6 +22,10 @@ export interface GenerateSwiftFilesOptions {
  */
 export async function generateSwiftFiles(options: GenerateSwiftFilesOptions): Promise<void> {
   const { targetPath, projectRoot, widgets } = options
+
+  // Dynamic import for ESM module compatibility
+  // voltra/server is an ESM module, but the plugin is compiled to CommonJS
+  const { renderWidgetToString } = await import('voltra/server')
 
   // Prerender widget initial states if any widgets have initialStatePath configured
   const prerenderedStates = await prerenderWidgetState(widgets || [], projectRoot, renderWidgetToString)

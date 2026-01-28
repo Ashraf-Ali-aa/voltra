@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { renderAndroidWidgetToString } from 'voltra/android/server'
 
 import type { AndroidWidgetConfig } from '../../../types'
 import { logger } from '../../../utils'
@@ -20,6 +19,11 @@ export interface GenerateInitialStatesOptions {
  */
 export async function generateInitialStates(options: GenerateInitialStatesOptions): Promise<void> {
   const { widgets, projectRoot, platformProjectRoot } = options
+
+  // Dynamic import for ESM module compatibility
+  // voltra/android/server is an ESM module, but the plugin is compiled to CommonJS
+  const { renderAndroidWidgetToString } = await import('voltra/android/server')
+
 
   // Prerender widget states
   const prerenderedStates = await prerenderWidgetState(widgets, projectRoot, renderAndroidWidgetToString)
