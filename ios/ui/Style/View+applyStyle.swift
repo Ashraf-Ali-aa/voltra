@@ -15,17 +15,17 @@ extension TextAlignment {
 // MARK: - View Extension
 
 extension View {
-  func applyStyle(_ optionalStyle: [String: JSONValue]?) -> some View {
+  func applyStyle(_ optionalStyle: [String: JSONValue]?, contentAlignment: Alignment? = nil) -> some View {
     voltraIfLet(optionalStyle) { _, rawStyle in
       let anyStyle = rawStyle.mapValues { $0.toAny() }
       let style = StyleConverter.convert(anyStyle)
-      return self.applyStyle(style)
+      return self.applyStyle(style, contentAlignment: contentAlignment)
     }
   }
 
-  func applyStyle(_ style: (LayoutStyle, DecorationStyle, RenderingStyle, TextStyle)) -> some View {
+  func applyStyle(_ style: (LayoutStyle, DecorationStyle, RenderingStyle, TextStyle), contentAlignment: Alignment? = nil) -> some View {
     let (layout, decoration, rendering, text) = style
-    let frameAlignment = Alignment(horizontal: text.alignment.horizontalAlignment, vertical: .top)
+    let frameAlignment = contentAlignment ?? Alignment(horizontal: text.alignment.horizontalAlignment, vertical: .top)
     return self
       // 1. Text Properties (Propagate font size for measurement)
       .modifier(TextStyleModifier(style: text))

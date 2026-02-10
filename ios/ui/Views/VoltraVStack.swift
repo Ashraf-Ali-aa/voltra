@@ -35,13 +35,15 @@ public struct VoltraVStack: View {
 
     let hasFillWidth = layout.width == .fill
 
+    let frameAlignment = Alignment(horizontal: alignment, vertical: .center)
+
     VStack(alignment: alignment, spacing: gap) {
       element.children ?? .empty
     }
     .voltraIf(hasFillWidth) { content in
-      content.frame(maxWidth: .infinity, alignment: Alignment(horizontal: alignment, vertical: .center))
+      content.frame(maxWidth: .infinity, alignment: frameAlignment)
     }
-    .applyStyle(element.style)
+    .applyStyle(element.style, contentAlignment: frameAlignment)
   }
 
   @ViewBuilder

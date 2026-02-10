@@ -37,9 +37,22 @@ struct CompositeStyleModifier: ViewModifier {
             aspectRatio: layout.aspectRatio
           ))
       } else {
-        // LEGACY PATH: unchanged
+        // LEGACY PATH
         content
-          .modifier(LayoutModifier(style: layout))
+          .modifier(LayoutModifier(style: layout, contentAlignment: contentAlignment))
+          .voltraIfLet(layout.alignSelf) { content, alignSelf in
+            let alignment: Alignment = switch alignSelf {
+            case .flexStart: .topLeading
+            case .center: .center
+            case .flexEnd: .bottomTrailing
+            case .stretch: .center
+            }
+            content.frame(
+              maxWidth: alignSelf == .stretch ? .infinity : nil,
+              maxHeight: alignSelf == .stretch ? .infinity : nil,
+              alignment: alignment
+            )
+          }
           .modifier(DecorationModifier(style: decoration))
           .modifier(RenderingModifier(style: rendering))
       }

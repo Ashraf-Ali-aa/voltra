@@ -14,7 +14,7 @@ enum StyleConverter {
 
     // Legacy flex: max of flex and flexGrow for backward compat
     let finalFlex = max(flexVal, flexGrowVal)
-    let priority: Double? = finalFlex > 0 ? 1.0 : nil
+    let priority: Double? = finalFlex > 0 ? Double(finalFlex) : nil
 
     // RN flex shorthand: flex > 0 → grow=flex, shrink=1, basis=0
     let resolvedFlexGrow: CGFloat

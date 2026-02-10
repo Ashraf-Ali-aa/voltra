@@ -37,13 +37,15 @@ public struct VoltraHStack: VoltraView {
 
     let hasFillHeight = layout.height == .fill
 
+    let frameAlignment = Alignment(horizontal: .center, vertical: alignment)
+
     HStack(alignment: alignment, spacing: gap) {
       element.children ?? .empty
     }
     .voltraIf(hasFillHeight) { content in
-      content.frame(maxHeight: .infinity, alignment: Alignment(horizontal: .center, vertical: alignment))
+      content.frame(maxHeight: .infinity, alignment: frameAlignment)
     }
-    .applyStyle(element.style)
+    .applyStyle(element.style, contentAlignment: frameAlignment)
   }
 
   @ViewBuilder
