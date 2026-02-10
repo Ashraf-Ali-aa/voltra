@@ -1,11 +1,11 @@
 import { IOSConfig } from 'expo/config-plugins'
 
+import { withAndroid } from './android'
 import { IOS } from './constants'
-import { withAndroid } from './features/android'
-import { withIOS } from './features/ios'
-import { withPushNotifications } from './features/pushNotifications'
+import { withIOS, withPushNotifications } from './ios'
+import { withIOS as withIOSWidget } from './ios-widget'
 import type { VoltraConfigPlugin } from './types'
-import { ensureURLScheme } from './utils'
+import { ensureURLScheme } from './utils/urlScheme'
 import { validateProps } from './validation'
 
 /**
@@ -20,38 +20,33 @@ const withVoltra: VoltraConfigPlugin = (config, props = {}) => {
   // Validate props at entry point
   validateProps(props)
 
-  // Use deploymentTarget from props if provided, otherwise fall back to default
-  const deploymentTarget = props.deploymentTarget || IOS.DEPLOYMENT_TARGET
-  // Use custom targetName if provided, otherwise fall back to default "{AppName}LiveActivity"
-  const targetName = props.targetName || `${IOSConfig.XcodeUtils.sanitizedName(config.name)}LiveActivity`
-  const bundleIdentifier = `${config.ios?.bundleIdentifier}.${targetName}`
+  // Configure iOS if bundleIdentifier is available
+  if (config.ios?.bundleIdentifier) {
+    // Use deploymentTarget from props if provided, otherwise fall back to default
+    const deploymentTarget = props.deploymentTarget || IOS.DEPLOYMENT_TARGET
+    // Use custom targetName if provided, otherwise fall back to default "{AppName}LiveActivity"
+    const targetName = props.targetName || `${IOSConfig.XcodeUtils.sanitizedName(config.name)}LiveActivity`
+    const bundleIdentifier = `${config.ios.bundleIdentifier}.${targetName}`
 
-  // Ensure URL scheme is set for widget deep linking
-  config = ensureURLScheme(config)
+    // Ensure URL scheme is set for widget deep linking
+    config = ensureURLScheme(config)
 
-  // Add Live Activities support to main app Info.plist
-  config.ios = {
-    ...config.ios,
-    infoPlist: {
-      ...config.ios?.infoPlist,
-      NSSupportsLiveActivities: true,
-      NSSupportsLiveActivitiesFrequentUpdates: false,
-      // Only add group identifier if provided
-      ...(props?.groupIdentifier ? { Voltra_AppGroupIdentifier: props.groupIdentifier } : {}),
-      // Store widget IDs in Info.plist for native module to access
-      ...(props?.widgets && props.widgets.length > 0 ? { Voltra_WidgetIds: props.widgets.map((w) => w.id) } : {}),
-    },
+    // Configure iOS main app (Info.plist, entitlements, EAS)
+    config = withIOS(config, {
+      groupIdentifier: props?.groupIdentifier,
+      widgetIds: props?.widgets && props.widgets.length > 0 ? props.widgets.map((w) => w.id) : undefined,
+    })
+
+    // Configure iOS widget extension (files, xcode, podfile, plist, eas)
+    config = withIOSWidget(config, {
+      targetName,
+      bundleIdentifier,
+      deploymentTarget,
+      widgets: props?.widgets,
+      ...(props?.groupIdentifier ? { groupIdentifier: props.groupIdentifier } : {}),
+      ...(props?.fonts ? { fonts: props.fonts } : {}),
+    })
   }
-
-  // Apply iOS configuration (files, xcode, podfile, plist, eas)
-  config = withIOS(config, {
-    targetName,
-    bundleIdentifier,
-    deploymentTarget,
-    widgets: props?.widgets,
-    ...(props?.groupIdentifier ? { groupIdentifier: props.groupIdentifier } : {}),
-    ...(props?.fonts ? { fonts: props.fonts } : {}),
-  })
 
   // Apply Android configuration (files, manifest)
   if (props.android) {
