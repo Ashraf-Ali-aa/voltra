@@ -2,6 +2,7 @@ import React from 'react'
 
 import { renderVoltraVariantToJson } from '../../renderer/renderer'
 import { Image } from '../Image'
+import { Text } from '../Text'
 
 describe('Image Component', () => {
   test('Asset name source', () => {
@@ -26,6 +27,12 @@ describe('Image Component', () => {
     // @ts-ignore
     const output = renderVoltraVariantToJson(<Image />)
     expect(output.p?.src).toBeUndefined()
+  })
+
+  test('fallback node', () => {
+    const output = renderVoltraVariantToJson(<Image source={{ assetName: 'x' }} fallback={<Text>Missing</Text>} />)
+    expect(output.p.flb).toBeDefined()
+    expect((output.p.flb as any).t).toBeDefined()
   })
 
   test('resizeMode cover', () => {

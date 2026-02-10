@@ -3,19 +3,17 @@ package voltra.glance.renderers
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
-import androidx.glance.LocalContext
+import androidx.glance.background
 import androidx.glance.text.Text
-import com.google.gson.Gson
+import androidx.glance.unit.ColorProvider
 import voltra.glance.LocalVoltraRenderContext
-import voltra.glance.ResolvedStyle
 import voltra.glance.applyClickableIfNeeded
 import voltra.glance.resolveAndApplyStyle
 import voltra.models.VoltraElement
 import voltra.models.VoltraNode
+import voltra.models.componentProp
+import voltra.styling.JSColorParser
 import voltra.styling.toGlanceTextStyle
-
-private const val TAG = "TextAndImageRenderers"
-private val gson = Gson()
 
 @Composable
 fun RenderText(
@@ -94,7 +92,20 @@ fun RenderImage(
             alpha = alpha,
         )
     } else {
-        androidx.glance.layout.Box(modifier = finalModifier) {}
+        val fallbackNode =
+            element.componentProp(
+                "fallback",
+                renderContext.sharedStyles,
+                renderContext.sharedElements,
+            )
+
+        if (fallbackNode != null) {
+            androidx.glance.layout.Box(modifier = finalModifier) {
+                RenderNode(fallbackNode)
+            }
+        } else {
+            androidx.glance.layout.Box(modifier = finalModifier) {}
+        }
     }
 }
 

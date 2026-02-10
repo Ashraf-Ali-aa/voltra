@@ -31,6 +31,18 @@ Displays bitmap images from the asset catalog or base64 encoded data.
 
 - `source` (object, optional): Image source object (`assetName` or `base64`)
 - `resizeMode` (string, optional): `"cover"`, `"contain"`, `"stretch"`, `"repeat"`, or `"center"`
+- `fallback` (ReactNode, optional): Custom content rendered when the image is missing
+
+**Styling the fallback:**
+
+To add a background color when an image is missing, use `backgroundColor` in the `style` prop:
+
+```jsx
+<Image
+  source={{ assetName: 'photo' }}
+  style={{ backgroundColor: '#E0E0E0', borderRadius: 12 }}
+/>
+```
 
 ---
 

@@ -63,6 +63,13 @@ const TESTING_GROUNDS_SECTIONS = [
     route: '/testing-grounds/image-preloading',
   },
   {
+    id: 'image-fallback',
+    title: 'Image Fallback',
+    description:
+      'Explore the new image fallback behavior using backgroundColor from styles. Test missing images with various styling approaches.',
+    route: '/testing-grounds/image-fallback',
+  },
+  {
     id: 'widget-scheduling',
     title: 'Widget Scheduling',
     description:
