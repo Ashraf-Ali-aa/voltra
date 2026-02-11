@@ -832,13 +832,6 @@
       }
     },
     {
-      "name": "View",
-      "description": "Flex container with configurable direction. Always uses flexbox layout.",
-      "swiftAvailability": "iOS 16.0, macOS 13.0",
-      "hasChildren": true,
-      "parameters": {}
-    },
-    {
       "name": "ZStack",
       "description": "Depth-based stack container",
       "swiftAvailability": "iOS 13.0, macOS 10.15",
@@ -1238,6 +1231,13 @@
           "description": "URL to navigate to when the link is tapped"
         }
       }
+    },
+    {
+      "name": "View",
+      "description": "Flex container with configurable direction. Always uses flexbox layout.",
+      "swiftAvailability": "iOS 16.0, macOS 13.0",
+      "hasChildren": true,
+      "parameters": {}
     }
   ]
 }
