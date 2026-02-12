@@ -19,7 +19,7 @@ This phase focuses on documentation, error handling improvements, and ensuring t
   - All methods now return Boolean to indicate success/failure for better error propagation
   - Proper error logging throughout with descriptive messages
 
-- [ ] Update the library's Android documentation:
+- [x] Update the library's Android documentation:
   - Edit `docs/android-widgets.md` (or create if not exists) to add "Interactive Widgets" section
   - Document the `actionType` prop and its values (`'refresh'` vs `'deepLink'`)
   - Document the `actionName` prop for identifying button presses
@@ -28,6 +28,15 @@ This phase focuses on documentation, error handling improvements, and ensuring t
     - Multiple buttons with different actions
     - Using `useInteractiveWidget` hook for handling actions
   - Add troubleshooting section for common issues
+
+  **Completed**: Created `docs/android-widgets.md` with comprehensive documentation:
+  - Overview section explaining interactive widgets concept
+  - Detailed documentation of `actionType` and `actionName` props with examples
+  - Full `useInteractiveWidget` hook documentation including parameters, return values, and action event structure
+  - Three complete code examples: simple refresh button, multiple buttons (counter), and combined refresh/deepLink actions
+  - Lower-level API documentation for `subscribeToWidgetActions`, `updateAndroidWidgetFromJS`, and `getLastTriggeredAction`
+  - Troubleshooting section covering common issues (widget not updating, actions not received, stale data, update failures)
+  - Best practices section with 5 recommendations for building interactive widgets
 
 - [ ] Add TypeScript JSDoc comments to all new public APIs:
   - Document `actionType` and `actionName` props in `baseProps.tsx`
