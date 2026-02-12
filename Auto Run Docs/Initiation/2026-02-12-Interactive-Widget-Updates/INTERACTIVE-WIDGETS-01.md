@@ -14,12 +14,19 @@ This phase establishes the core infrastructure for interactive widget updates on
 
   **Completed:** Created `VoltraRefreshAction.kt` that implements the `ActionCallback` interface. The class extracts widgetId and componentId from `ActionParameters`, logs action triggers, and calls `VoltraWidgetManager.updateWidget()` in an IO coroutine scope.
 
-- [ ] Update `getOnClickAction` function in `RenderCommon.kt` to support refresh actions:
+- [x] Update `getOnClickAction` function in `RenderCommon.kt` to support refresh actions:
   - Add a new parameter check for `actionType` prop (values: `"refresh"`, `"deepLink"`, or default to current behavior)
   - When `actionType === "refresh"`, return `actionRunCallback<VoltraRefreshAction>()` with widgetId and componentId parameters
   - Use `actionParametersOf()` to pass the widgetId and componentId to the callback
   - Keep existing deepLink behavior as default for backward compatibility
   - Import the new `VoltraRefreshAction` class
+
+  **Already Completed:** The `getOnClickAction` function in `RenderCommon.kt` (lines 30-69) already implements all required functionality:
+  - Extracts `actionType` from props (line 36)
+  - Returns `actionRunCallback<VoltraRefreshAction>()` with `WIDGET_ID_KEY` and `COMPONENT_ID_KEY` parameters when actionType is "refresh" (lines 40-48)
+  - Uses `actionParametersOf()` to pass widgetId and componentId
+  - Maintains backward compatibility with deepLink behavior as default
+  - Has `VoltraRefreshAction` import at line 20
 
 - [ ] Add `actionType` prop support to React components:
   - Update `src/android/jsx/baseProps.tsx` to add `actionType?: 'refresh' | 'deepLink'` to `VoltraAndroidBaseProps`
