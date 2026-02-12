@@ -8,6 +8,13 @@ import { Card } from '~/components/Card'
 
 const ANDROID_SECTIONS = [
   {
+    id: 'interactive-widget',
+    title: 'Interactive Widget Hook',
+    description:
+      'Test the useInteractiveWidget hook for reactive widget updates. Widget button presses trigger JS callbacks that automatically update the widget.',
+    route: '/android-widgets/interactive',
+  },
+  {
     id: 'pin-widgets',
     title: 'Pin Widgets',
     description:

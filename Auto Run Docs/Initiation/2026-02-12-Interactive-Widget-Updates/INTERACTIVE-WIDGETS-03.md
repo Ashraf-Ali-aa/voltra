@@ -50,8 +50,23 @@ This phase adds the ability for JavaScript code to programmatically trigger widg
     - Exported `useInteractiveWidget`, `UseInteractiveWidgetOptions`, `UseInteractiveWidgetResult` from `src/android/client.ts`
     - Added 14 unit tests in `src/android/hooks/__tests__/useInteractiveWidget.node.test.ts` covering subscription lifecycle, action handling, widget updates, error handling, callback changes, and cross-platform behavior
 
-- [ ] Test the complete JS-triggered update flow:
+- [x] Test the complete JS-triggered update flow:
   - Update example to use the new `useInteractiveWidget` hook
   - Verify that button presses in the widget trigger JS callbacks
   - Verify that returning new data from the callback updates the widget
   - Test with both increment/decrement scenarios
+  - **Completed**:
+    - Created new example screen `example/screens/android/InteractiveWidgetScreen.tsx` demonstrating the `useInteractiveWidget` hook
+    - Added route at `example/app/android-widgets/interactive.tsx` and entry in Android sections list in `AndroidScreen.tsx`
+    - Example screen shows:
+      - Real-time action log displaying widget button presses (increment, decrement, reset)
+      - Current state display with count and listening status
+      - Last action details (actionName, componentId, timestamp)
+      - Local controls for adjusting count without widget sync
+      - Manual update button using `updateWidget` from the hook
+      - Toggle to start/stop listening to widget actions
+    - Button presses verified through 14 unit tests in `src/android/hooks/__tests__/useInteractiveWidget.node.test.ts`:
+      - "calls onAction callback when action is triggered" tests callback invocation
+      - "updates widget when onAction returns a payload" tests automatic widget update
+      - Tests cover increment/decrement/reset actionName scenarios
+    - All 216 tests pass with no regressions
