@@ -17,11 +17,19 @@ This phase adds the ability for JavaScript code to programmatically trigger widg
   - Handle serialization to JSON before passing to native
   - **Completed**: Added `updateAndroidWidgetFromJS(widgetId, payload)` function in `src/android/widgets/api.ts:268-274`. Created types `AndroidWidgetPayload` and `UpdateAndroidWidgetFromJSResult`. Added `updateWidgetFromJS` to `VoltraModuleSpec` in `src/VoltraModule.ts:159-166`. Exported from `src/android/widgets/index.ts` and `src/android/client.ts`. Also exported `renderAndroidWidgetToJson` utility for creating payloads from JSX. Added 5 unit tests in `src/android/widgets/__tests__/update-widget-from-js.node.test.ts`.
 
-- [ ] Implement a widget update subscription system:
+- [x] Implement a widget update subscription system:
   - Add `subscribeToWidgetActions(widgetId: string, callback: (action: WidgetAction) => void)` in TypeScript
   - Use React Native's DeviceEventEmitter or NativeEventEmitter to listen for action events
   - In `VoltraRefreshAction.kt`, emit an event to JS when an action is triggered (not just store in SharedPreferences)
   - Add `VoltraEventEmitter` or use existing event infrastructure if available
+  - **Completed**:
+    - Created `WidgetActionEvent` class in `android/src/main/java/voltra/events/WidgetActionEvent.kt` that extends `VoltraEvent` with widgetId, actionName, componentId, and timestamp fields
+    - Updated `VoltraRefreshAction.kt:56-69` to emit `WidgetActionEvent` via `VoltraEventBus` when a refresh action is triggered
+    - Updated `VoltraEvent.kt:20-25` to parse `WidgetActionEvent` from map data in `fromMap()` method
+    - Added `subscribeToWidgetActions(widgetId, callback)` function in `src/android/widgets/api.ts:340-393` that uses module-level subscription management to filter events by widgetId
+    - Added `WidgetActionEvent` type exported from `src/android/widgets/api.ts:282-293`
+    - Exported `subscribeToWidgetActions` and `WidgetActionEvent` from `src/android/widgets/index.ts` and `src/android/client.ts`
+    - Added 10 unit tests in `src/android/widgets/__tests__/subscribe-to-widget-actions.node.test.ts` covering subscription setup, event dispatch, callback removal, error handling, and cross-platform behavior
 
 - [ ] Create a higher-level hook for interactive widgets:
   - Create `src/android/hooks/useInteractiveWidget.ts`

@@ -18,8 +18,12 @@ sealed class VoltraEvent {
          * Parse event from persisted map data.
          */
         fun fromMap(map: Map<String, Any?>): VoltraEvent? {
-            // No events supported currently
-            return null
+            val type = map["type"] as? String ?: return null
+
+            return when (type) {
+                WidgetActionEvent.TYPE -> WidgetActionEvent.fromMap(map)
+                else -> null
+            }
         }
     }
 }

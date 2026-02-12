@@ -25,6 +25,7 @@ export {
   getLastTriggeredAction,
   reloadAndroidWidgets,
   requestPinAndroidWidget,
+  subscribeToWidgetActions,
   updateAndroidWidget,
   updateAndroidWidgetFromJS,
 } from './widgets/api.js'
@@ -32,6 +33,7 @@ export type {
   AndroidWidgetPayload,
   TriggeredActionInfo,
   UpdateAndroidWidgetFromJSResult,
+  WidgetActionEvent,
 } from './widgets/api.js'
 export type {
   AndroidWidgetSize,

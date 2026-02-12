@@ -1,3 +1,6 @@
+import { Platform } from 'react-native'
+
+import type { EventSubscription } from '../../types.js'
 import VoltraModule from '../../VoltraModule.js'
 import { renderAndroidWidgetToString } from './renderer.js'
 import type { AndroidWidgetVariants, UpdateAndroidWidgetOptions, WidgetInfo } from './types.js'
@@ -271,4 +274,116 @@ export const updateAndroidWidgetFromJS = async (
 ): Promise<UpdateAndroidWidgetFromJSResult> => {
   const jsonPayload = JSON.stringify(payload)
   return VoltraModule.updateWidgetFromJS(widgetId, jsonPayload)
+}
+
+/**
+ * Event emitted when a widget action is triggered.
+ */
+export type WidgetActionEvent = {
+  /** Event type identifier */
+  type: 'widgetAction'
+  /** The widget ID that triggered the action */
+  widgetId: string
+  /** The action name (from actionName prop or componentId) */
+  actionName: string
+  /** The component ID that triggered the action */
+  componentId: string
+  /** Unix timestamp in milliseconds when the action was triggered */
+  timestamp: number
+}
+
+const noopSubscription: EventSubscription = {
+  remove: () => {},
+}
+
+// Store subscriptions by widgetId for filtering
+const widgetSubscriptions = new Map<string, Set<(action: WidgetActionEvent) => void>>()
+let globalSubscription: EventSubscription | null = null
+
+/**
+ * Subscribe to widget action events for a specific widget.
+ *
+ * When a button with `actionType="refresh"` is pressed on the widget,
+ * the callback will be invoked with information about the action.
+ *
+ * This enables reactive widget updates from JavaScript - you can respond
+ * to user interactions and update the widget in real-time.
+ *
+ * @param widgetId - The widget ID to subscribe to
+ * @param callback - Function called when an action is triggered on the widget
+ * @returns EventSubscription with a remove() method to unsubscribe
+ *
+ * @example
+ * ```typescript
+ * import { subscribeToWidgetActions, updateAndroidWidgetFromJS, renderAndroidWidgetToJson } from 'voltra/android/widgets'
+ *
+ * let count = 0
+ *
+ * const subscription = subscribeToWidgetActions('counter', async (action) => {
+ *   if (action.actionName === 'increment') {
+ *     count++
+ *   } else if (action.actionName === 'decrement') {
+ *     count--
+ *   }
+ *
+ *   // Update the widget with new count
+ *   const payload = renderAndroidWidgetToJson([
+ *     { size: { width: 150, height: 100 }, content: <CounterWidget count={count} /> }
+ *   ])
+ *   await updateAndroidWidgetFromJS('counter', payload)
+ * })
+ *
+ * // Later: unsubscribe
+ * subscription.remove()
+ * ```
+ */
+export const subscribeToWidgetActions = (
+  widgetId: string,
+  callback: (action: WidgetActionEvent) => void
+): EventSubscription => {
+  if (Platform.OS !== 'android') {
+    console.warn('[Voltra] subscribeToWidgetActions is only supported on Android. Returning no-op subscription.')
+    return noopSubscription
+  }
+
+  // Get or create the set of callbacks for this widget
+  if (!widgetSubscriptions.has(widgetId)) {
+    widgetSubscriptions.set(widgetId, new Set())
+  }
+  const callbacks = widgetSubscriptions.get(widgetId)!
+  callbacks.add(callback)
+
+  // Set up the global listener if not already active
+  if (!globalSubscription) {
+    globalSubscription = VoltraModule.addListener('widgetAction', (event: WidgetActionEvent) => {
+      const targetCallbacks = widgetSubscriptions.get(event.widgetId)
+      if (targetCallbacks) {
+        targetCallbacks.forEach((cb) => {
+          try {
+            cb(event)
+          } catch (error) {
+            console.error('[Voltra] Error in widget action callback:', error)
+          }
+        })
+      }
+    })
+  }
+
+  // Return a subscription that removes this specific callback
+  return {
+    remove: () => {
+      callbacks.delete(callback)
+
+      // Clean up empty sets
+      if (callbacks.size === 0) {
+        widgetSubscriptions.delete(widgetId)
+      }
+
+      // Remove global listener if no more subscriptions
+      if (widgetSubscriptions.size === 0 && globalSubscription) {
+        globalSubscription.remove()
+        globalSubscription = null
+      }
+    },
+  }
 }

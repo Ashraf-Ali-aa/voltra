@@ -9,6 +9,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import voltra.events.VoltraEventBus
+import voltra.events.WidgetActionEvent
 import voltra.widget.VoltraWidgetManager
 
 /**
@@ -55,6 +57,9 @@ class VoltraRefreshAction : ActionCallback {
         // Store the triggered action info in SharedPreferences
         storeLastAction(context, widgetId, actionName, componentId)
 
+        // Emit event to JS via event bus
+        emitActionEvent(context, widgetId, actionName ?: componentId ?: "unknown", componentId ?: "unknown")
+
         // Launch widget update in IO coroutine scope
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -92,5 +97,29 @@ class VoltraRefreshAction : ActionCallback {
             .commit()
 
         Log.d(TAG, "Stored last action for widgetId=$widgetId: $actionInfo")
+    }
+
+    /**
+     * Emit an event to JavaScript via the event bus.
+     * This enables reactive widget updates from JavaScript.
+     */
+    private fun emitActionEvent(
+        context: Context,
+        widgetId: String,
+        actionName: String,
+        componentId: String,
+    ) {
+        try {
+            val eventBus = VoltraEventBus.getInstance(context)
+            val event = WidgetActionEvent(
+                widgetId = widgetId,
+                actionName = actionName,
+                componentId = componentId,
+            )
+            eventBus.send(event)
+            Log.d(TAG, "Emitted widgetAction event: widgetId=$widgetId, actionName=$actionName")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to emit action event (app may not be running): ${e.message}")
+        }
     }
 }
