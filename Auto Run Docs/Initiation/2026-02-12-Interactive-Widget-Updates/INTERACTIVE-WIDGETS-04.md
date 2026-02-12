@@ -38,11 +38,23 @@ This phase focuses on documentation, error handling improvements, and ensuring t
   - Troubleshooting section covering common issues (widget not updating, actions not received, stale data, update failures)
   - Best practices section with 5 recommendations for building interactive widgets
 
-- [ ] Add TypeScript JSDoc comments to all new public APIs:
+- [x] Add TypeScript JSDoc comments to all new public APIs:
   - Document `actionType` and `actionName` props in `baseProps.tsx`
   - Document `useInteractiveWidget` hook parameters and return type
   - Document `updateWidget` and `getLastTriggeredAction` functions
   - Ensure IntelliSense provides helpful information to developers
+
+  **Completed**: Verified and enhanced JSDoc comments across all new public APIs:
+  - `actionType` and `actionName` props in `src/android/jsx/baseProps.tsx` already had complete JSDoc with `@example`
+  - `useInteractiveWidget` hook in `src/android/hooks/useInteractiveWidget.ts` already had comprehensive JSDoc with `@param`, `@returns`, and multiple `@example` blocks
+  - `UseInteractiveWidgetOptions` and `UseInteractiveWidgetResult` types fully documented
+  - `getLastTriggeredAction` in `src/android/widgets/api.ts` already had complete JSDoc with `@param`, `@returns`, and `@example`
+  - `updateAndroidWidgetFromJS` in `src/android/widgets/api.ts` already had complete JSDoc with `@param`, `@returns`, and `@example`
+  - `subscribeToWidgetActions` in `src/android/widgets/api.ts` already had complete JSDoc with `@param`, `@returns`, and `@example`
+  - All related types (`TriggeredActionInfo`, `AndroidWidgetPayload`, `UpdateAndroidWidgetFromJSResult`, `WidgetActionEvent`) documented
+  - Enhanced `renderAndroidWidgetToJson` with comprehensive JSDoc including `@param`, `@returns`, two `@example` blocks
+  - Enhanced `renderAndroidWidgetToString` with JSDoc including `@param`, `@returns`, `@example`, and `@see` reference
+  - TypeScript compilation verified with no errors
 
 - [ ] Create a polished example widget showcasing interactive features:
   - Create `example/widgets/InteractiveCounterWidget.tsx` as a standalone example
