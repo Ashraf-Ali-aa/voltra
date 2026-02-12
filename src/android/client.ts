@@ -49,6 +49,10 @@ export { renderAndroidWidgetToJson, renderAndroidWidgetToString } from './widget
 // Preload API
 export { clearPreloadedImages, preloadImages, reloadWidgets } from './preload.js'
 
+// Interactive Widget Hook
+export { useInteractiveWidget } from './hooks/index.js'
+export type { UseInteractiveWidgetOptions, UseInteractiveWidgetResult } from './hooks/index.js'
+
 // Android Preview Components
 export { VoltraView, type VoltraViewProps } from './components/VoltraView.js'
 export {
