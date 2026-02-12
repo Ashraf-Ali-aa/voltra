@@ -15,6 +15,13 @@ const ANDROID_SECTIONS = [
     route: '/android-widgets/interactive',
   },
   {
+    id: 'interactive-counter',
+    title: 'Interactive Counter Widget',
+    description:
+      'A polished example widget showcasing interactive features with increment, decrement, and reset buttons. Demonstrates best practices for building interactive widgets.',
+    route: '/android-widgets/interactive-counter',
+  },
+  {
     id: 'pin-widgets',
     title: 'Pin Widgets',
     description:

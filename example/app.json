@@ -90,6 +90,18 @@
                 "resizeMode": "horizontal|vertical",
                 "widgetCategory": "home_screen",
                 "initialStatePath": "./widgets/android-image-fallback-initial.tsx"
+              },
+              {
+                "id": "interactive_counter",
+                "displayName": "Interactive Counter",
+                "description": "A polished counter widget showcasing interactive features with increment, decrement, and reset buttons",
+                "minCellWidth": 2,
+                "minCellHeight": 2,
+                "targetCellWidth": 2,
+                "targetCellHeight": 3,
+                "resizeMode": "horizontal|vertical",
+                "widgetCategory": "home_screen",
+                "initialStatePath": "./widgets/interactive-counter-initial.tsx"
               }
             ]
           },

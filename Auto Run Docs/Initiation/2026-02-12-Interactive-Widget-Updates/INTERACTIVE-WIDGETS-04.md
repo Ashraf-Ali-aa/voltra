@@ -56,12 +56,21 @@ This phase focuses on documentation, error handling improvements, and ensuring t
   - Enhanced `renderAndroidWidgetToString` with JSDoc including `@param`, `@returns`, `@example`, and `@see` reference
   - TypeScript compilation verified with no errors
 
-- [ ] Create a polished example widget showcasing interactive features:
+- [x] Create a polished example widget showcasing interactive features:
   - Create `example/widgets/InteractiveCounterWidget.tsx` as a standalone example
   - Include: increment button, decrement button, reset button, and current count display
   - Style it nicely with proper spacing and colors
   - Create corresponding update handler demonstrating best practices
   - Add this example to the Android examples screen in the app
+
+  **Completed**: Created a polished InteractiveCounterWidget with full example screen:
+  - `example/widgets/InteractiveCounterWidget.tsx`: Standalone widget component with dark theme (#1E293B background), large centered count display (48px bold text), color-coded count value (green for positive, red for negative, white for zero), increment/decrement buttons in a row with proper styling (#22C55E green, #EF4444 red), reset outline button, and optional last-updated timestamp
+  - `example/widgets/interactive-counter-initial.tsx`: Initial state file for the widget with 250x280 size
+  - `example/app.json`: Added `interactive_counter` widget configuration with 2x3 target cells
+  - `example/screens/android/InteractiveCounterScreen.tsx`: Full test screen with current state display, local controls, widget controls, action log, and testing instructions
+  - `example/app/android-widgets/interactive-counter.tsx`: Expo Router route for the screen
+  - `example/screens/android/AndroidScreen.tsx`: Added entry in Android examples list with description
+  - All TypeScript compilation and tests pass (216 tests)
 
 - [ ] Write unit tests for the new functionality:
   - Test `getOnClickAction` with different actionType values
