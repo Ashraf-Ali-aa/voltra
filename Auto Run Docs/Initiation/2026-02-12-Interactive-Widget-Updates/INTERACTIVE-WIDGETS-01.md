@@ -34,11 +34,16 @@ This phase establishes the core infrastructure for interactive widget updates on
 
   **Already Completed:** The `actionType` prop is already defined in `src/android/jsx/baseProps.tsx` at line 13 with full JSDoc documentation (lines 8-12). The prop flows through existing serialization to Kotlin, where `RenderCommon.kt:36` extracts and handles it appropriately.
 
-- [ ] Update the example widget to demonstrate interactive refresh:
+- [x] Update the example widget to demonstrate interactive refresh:
   - Modify `example/widgets/AndroidVoltraWidget.tsx` to add a FilledButton with `actionType="refresh"`
   - Add a `count` prop to the widget and display it
   - Update `example/widgets/updateAndroidVoltraWidget.tsx` to increment count on each update
   - Store count in AsyncStorage or a simple state file that persists between updates
+
+  **Already Completed:** The example widget already demonstrates interactive refresh:
+  - `AndroidVoltraWidget.tsx` has a `count` prop (line 6), displays it (line 25), and includes a `FilledButton` with `actionType="refresh"` (lines 27-32)
+  - `updateAndroidVoltraWidget.tsx` has an in-memory counter that increments on each update (line 26) and passes it to the widget (line 31)
+  - Uses in-memory storage as noted in the comment (line 7-10) - this persists while the app process runs, suitable for demonstration purposes
 
 - [ ] Test the interactive widget refresh flow:
   - Build the example app for Android: `cd example && npx expo run:android`
