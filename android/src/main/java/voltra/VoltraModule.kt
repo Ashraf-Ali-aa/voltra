@@ -175,6 +175,33 @@ class VoltraModule : Module() {
                 Log.d(TAG, "clearAllAndroidWidgets completed")
             }
 
+            AsyncFunction("updateWidgetFromJS") {
+                widgetId: String,
+                jsonPayload: String,
+                ->
+
+                Log.d(TAG, "updateWidgetFromJS called with widgetId=$widgetId")
+
+                try {
+                    // Validate that the payload is valid JSON
+                    JSONObject(jsonPayload)
+
+                    // Write to SharedPreferences (passing null for deepLinkUrl to preserve existing)
+                    widgetManager.writeWidgetData(widgetId, jsonPayload, null)
+
+                    // Trigger widget refresh
+                    runBlocking {
+                        widgetManager.updateWidget(widgetId)
+                    }
+
+                    Log.d(TAG, "updateWidgetFromJS completed successfully")
+                    mapOf("success" to true)
+                } catch (e: Exception) {
+                    Log.e(TAG, "updateWidgetFromJS failed: ${e.message}", e)
+                    mapOf("success" to false, "error" to (e.message ?: "Unknown error"))
+                }
+            }
+
             AsyncFunction("getLastTriggeredAction") { widgetId: String ->
                 Log.d(TAG, "getLastTriggeredAction called with widgetId=$widgetId")
 
