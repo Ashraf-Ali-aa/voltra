@@ -28,9 +28,11 @@ This phase establishes the core infrastructure for interactive widget updates on
   - Maintains backward compatibility with deepLink behavior as default
   - Has `VoltraRefreshAction` import at line 20
 
-- [ ] Add `actionType` prop support to React components:
+- [x] Add `actionType` prop support to React components:
   - Update `src/android/jsx/baseProps.tsx` to add `actionType?: 'refresh' | 'deepLink'` to `VoltraAndroidBaseProps`
   - The prop will flow through existing serialization without additional changes needed
+
+  **Already Completed:** The `actionType` prop is already defined in `src/android/jsx/baseProps.tsx` at line 13 with full JSDoc documentation (lines 8-12). The prop flows through existing serialization to Kotlin, where `RenderCommon.kt:36` extracts and handles it appropriately.
 
 - [ ] Update the example widget to demonstrate interactive refresh:
   - Modify `example/widgets/AndroidVoltraWidget.tsx` to add a FilledButton with `actionType="refresh"`
