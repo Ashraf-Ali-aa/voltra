@@ -33,38 +33,68 @@ class VoltraWidgetManager(
     /**
      * Write widget data to SharedPreferences
      * Uses commit() instead of apply() to ensure data is written before widget update
+     *
+     * @return true if data was written successfully, false otherwise
+     * @throws IllegalArgumentException if widgetId is empty or jsonString is empty
      */
     fun writeWidgetData(
         widgetId: String,
         jsonString: String,
         deepLinkUrl: String?,
-    ) {
+    ): Boolean {
         Log.d(TAG, "writeWidgetData: widgetId=$widgetId, deepLinkUrl=$deepLinkUrl")
         Log.d(TAG, "JSON length: ${jsonString.length}, preview: ${jsonString.take(200)}")
 
-        val editor = prefs.edit()
-        editor.putString("$KEY_JSON_PREFIX$widgetId", jsonString)
-
-        if (deepLinkUrl != null && deepLinkUrl.isNotEmpty()) {
-            editor.putString("$KEY_DEEP_LINK_PREFIX$widgetId", deepLinkUrl)
-        } else {
-            editor.remove("$KEY_DEEP_LINK_PREFIX$widgetId")
+        // Validate inputs
+        if (widgetId.isBlank()) {
+            Log.e(TAG, "writeWidgetData: widgetId is empty or blank")
+            return false
         }
 
-        // Use commit() for synchronous write - ensures data is available before widget update
-        val success = editor.commit()
-        Log.d(TAG, "Widget data written. Success: $success, length: ${jsonString.length}")
+        if (jsonString.isEmpty()) {
+            Log.e(TAG, "writeWidgetData: jsonString is empty for widgetId=$widgetId")
+            return false
+        }
+
+        return try {
+            val editor = prefs.edit()
+            editor.putString("$KEY_JSON_PREFIX$widgetId", jsonString)
+
+            if (deepLinkUrl != null && deepLinkUrl.isNotEmpty()) {
+                editor.putString("$KEY_DEEP_LINK_PREFIX$widgetId", deepLinkUrl)
+            } else {
+                editor.remove("$KEY_DEEP_LINK_PREFIX$widgetId")
+            }
+
+            // Use commit() for synchronous write - ensures data is available before widget update
+            val success = editor.commit()
+            if (success) {
+                Log.d(TAG, "Widget data written successfully. Length: ${jsonString.length}")
+            } else {
+                Log.e(TAG, "SharedPreferences commit() returned false for widgetId=$widgetId")
+            }
+            success
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception writing widget data for widgetId=$widgetId: ${e.message}", e)
+            false
+        }
     }
 
     /**
      * Read widget JSON from SharedPreferences.
      * Falls back to pre-rendered initial state from assets if no dynamic data is found.
+     * Handles SharedPreferences read failures gracefully.
      */
     fun readWidgetJson(widgetId: String): String? {
-        val json = prefs.getString("$KEY_JSON_PREFIX$widgetId", null)
-        if (json != null) {
-            Log.d(TAG, "readWidgetJson: widgetId=$widgetId, found in SharedPreferences, length=${json.length}")
-            return json
+        try {
+            val json = prefs.getString("$KEY_JSON_PREFIX$widgetId", null)
+            if (json != null) {
+                Log.d(TAG, "readWidgetJson: widgetId=$widgetId, found in SharedPreferences, length=${json.length}")
+                return json
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "readWidgetJson: SharedPreferences read failed for widgetId=$widgetId: ${e.message}", e)
+            // Fall through to try preloaded assets
         }
 
         // Fallback to pre-rendered state from assets
@@ -104,38 +134,79 @@ class VoltraWidgetManager(
 
     /**
      * Read widget deep link URL from SharedPreferences
+     * Handles read failures gracefully by returning null
      */
-    fun readDeepLinkUrl(widgetId: String): String? = prefs.getString("$KEY_DEEP_LINK_PREFIX$widgetId", null)
+    fun readDeepLinkUrl(widgetId: String): String? {
+        return try {
+            prefs.getString("$KEY_DEEP_LINK_PREFIX$widgetId", null)
+        } catch (e: Exception) {
+            Log.e(TAG, "readDeepLinkUrl: Failed to read for widgetId=$widgetId: ${e.message}", e)
+            null
+        }
+    }
 
     /**
      * Clear widget data from SharedPreferences
+     *
+     * @return true if data was cleared successfully, false otherwise
      */
-    fun clearWidgetData(widgetId: String) {
+    fun clearWidgetData(widgetId: String): Boolean {
         Log.d(TAG, "clearWidgetData: widgetId=$widgetId")
 
-        val editor = prefs.edit()
-        editor.remove("$KEY_JSON_PREFIX$widgetId")
-        editor.remove("$KEY_DEEP_LINK_PREFIX$widgetId")
-        editor.commit()
+        if (widgetId.isBlank()) {
+            Log.e(TAG, "clearWidgetData: widgetId is empty or blank")
+            return false
+        }
+
+        return try {
+            val editor = prefs.edit()
+            editor.remove("$KEY_JSON_PREFIX$widgetId")
+            editor.remove("$KEY_DEEP_LINK_PREFIX$widgetId")
+            val success = editor.commit()
+            if (!success) {
+                Log.e(TAG, "clearWidgetData: SharedPreferences commit() returned false for widgetId=$widgetId")
+            }
+            success
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception clearing widget data for widgetId=$widgetId: ${e.message}", e)
+            false
+        }
     }
 
     /**
      * Clear all widget data from SharedPreferences
+     *
+     * @return true if data was cleared successfully, false otherwise
      */
-    fun clearAllWidgetData() {
+    fun clearAllWidgetData(): Boolean {
         Log.d(TAG, "clearAllWidgetData")
 
-        val allKeys = prefs.all.keys
-        val widgetKeys =
-            allKeys.filter { key: String ->
-                key.startsWith(KEY_JSON_PREFIX) || key.startsWith(KEY_DEEP_LINK_PREFIX)
+        return try {
+            val allKeys = prefs.all.keys
+            val widgetKeys =
+                allKeys.filter { key: String ->
+                    key.startsWith(KEY_JSON_PREFIX) || key.startsWith(KEY_DEEP_LINK_PREFIX)
+                }
+
+            if (widgetKeys.isEmpty()) {
+                Log.d(TAG, "No widget keys to clear")
+                return true
             }
 
-        val editor = prefs.edit()
-        widgetKeys.forEach { key: String -> editor.remove(key) }
-        editor.commit()
+            val editor = prefs.edit()
+            widgetKeys.forEach { key: String -> editor.remove(key) }
+            val success = editor.commit()
 
-        Log.d(TAG, "Cleared ${widgetKeys.size} widget keys")
+            if (success) {
+                Log.d(TAG, "Cleared ${widgetKeys.size} widget keys")
+            } else {
+                Log.e(TAG, "clearAllWidgetData: SharedPreferences commit() returned false")
+            }
+            success
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception clearing all widget data: ${e.message}", e)
+            false
+        }
     }
 
     /**
