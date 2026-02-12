@@ -72,8 +72,30 @@ This phase focuses on documentation, error handling improvements, and ensuring t
   - `example/screens/android/AndroidScreen.tsx`: Added entry in Android examples list with description
   - All TypeScript compilation and tests pass (216 tests)
 
-- [ ] Write unit tests for the new functionality:
+- [x] Write unit tests for the new functionality:
   - Test `getOnClickAction` with different actionType values
   - Test action parameter serialization/deserialization
   - Test the useInteractiveWidget hook with mock native module
   - Add tests to existing test files or create new ones following project conventions
+
+  **Completed**: Added comprehensive unit tests for the interactive widget functionality:
+  - `src/android/widgets/__tests__/renderer-actions.node.test.tsx`: Tests for actionType/actionName prop serialization (12 tests)
+    - Verifies `actionType="refresh"` and `actionType="deepLink"` are serialized correctly
+    - Verifies `actionName` prop serialization with various values
+    - Tests multiple buttons with different actions in same widget
+    - Tests action props on container components (Box with deepLinkUrl)
+    - Edge cases: empty actionName, special characters, unicode preservation
+  - `src/android/widgets/__tests__/get-last-triggered-action.node.test.ts`: Tests for `getLastTriggeredAction` API (6 tests)
+    - Verifies action info retrieval when action was triggered
+    - Handles null return when no action triggered
+    - Tests different action names and timestamp precision
+    - Special characters in action/component names
+  - Verified existing tests for `useInteractiveWidget` hook (14 tests) with mock native module:
+    - Subscribe/unsubscribe on mount/unmount
+    - Re-subscribe on widgetId change
+    - onAction callback invocation and payload updates
+    - Error handling for failed updates and callback errors
+    - Manual updateWidget method
+    - Non-Android platform handling
+  - Verified existing tests for `subscribeToWidgetActions` (10 tests) and `updateAndroidWidgetFromJS` (5 tests)
+  - All 234 tests pass
