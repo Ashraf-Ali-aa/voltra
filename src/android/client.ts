@@ -26,8 +26,13 @@ export {
   reloadAndroidWidgets,
   requestPinAndroidWidget,
   updateAndroidWidget,
+  updateAndroidWidgetFromJS,
 } from './widgets/api.js'
-export type { TriggeredActionInfo } from './widgets/api.js'
+export type {
+  AndroidWidgetPayload,
+  TriggeredActionInfo,
+  UpdateAndroidWidgetFromJSResult,
+} from './widgets/api.js'
 export type {
   AndroidWidgetSize,
   AndroidWidgetSizeVariant,
@@ -35,6 +40,9 @@ export type {
   UpdateAndroidWidgetOptions,
   WidgetInfo,
 } from './widgets/types.js'
+
+// Widget renderer utilities (for creating payloads for updateAndroidWidgetFromJS)
+export { renderAndroidWidgetToJson, renderAndroidWidgetToString } from './widgets/renderer.js'
 
 // Preload API
 export { clearPreloadedImages, preloadImages, reloadWidgets } from './preload.js'

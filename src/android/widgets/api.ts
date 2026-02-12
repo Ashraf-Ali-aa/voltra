@@ -210,3 +210,65 @@ export type TriggeredActionInfo = {
 export const getLastTriggeredAction = async (widgetId: string): Promise<TriggeredActionInfo | null> => {
   return VoltraModule.getLastTriggeredAction(widgetId)
 }
+
+/**
+ * Payload for updating an Android widget from JavaScript.
+ * This represents the serializable widget data structure.
+ */
+export type AndroidWidgetPayload = {
+  /** Version of the payload format (typically 1) */
+  v?: number
+  /** Size variants mapping size keys to rendered node trees */
+  variants: Record<string, unknown>
+  /** Shared styles array (optional) */
+  s?: unknown[]
+  /** Shared elements array (optional) */
+  e?: unknown[]
+}
+
+/**
+ * Result from updating a widget from JavaScript.
+ */
+export type UpdateAndroidWidgetFromJSResult = {
+  /** Whether the update was successful */
+  success: boolean
+  /** Error message if the update failed */
+  error?: string
+}
+
+/**
+ * Update an Android widget from JavaScript with a payload object.
+ *
+ * This function allows programmatic widget updates triggered by JS code,
+ * such as responding to widget action callbacks. Use this when you need
+ * to update a widget with new data computed in JavaScript.
+ *
+ * For JSX-based updates, use `updateAndroidWidget` instead.
+ *
+ * @param widgetId - The widget identifier
+ * @param payload - The widget payload to send to the native module
+ * @returns Promise that resolves to a result indicating success or failure
+ *
+ * @example
+ * ```typescript
+ * import { updateAndroidWidgetFromJS, renderAndroidWidgetToJson } from 'voltra/android/widgets'
+ *
+ * // Create payload from JSX
+ * const payload = renderAndroidWidgetToJson([
+ *   { size: { width: 150, height: 100 }, content: <MyWidget count={newCount} /> }
+ * ])
+ *
+ * // Update the widget
+ * const result = await updateAndroidWidgetFromJS('myWidget', payload)
+ * if (!result.success) {
+ *   console.error('Failed to update widget:', result.error)
+ * }
+ * ```
+ */
+export const updateAndroidWidgetFromJS = async (
+  widgetId: string,
+  payload: AndroidWidgetPayload
+): Promise<UpdateAndroidWidgetFromJSResult> => {
+  const jsonPayload = JSON.stringify(payload)
+  return VoltraModule.updateWidgetFromJS(widgetId, jsonPayload)
+}

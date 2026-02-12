@@ -11,10 +11,11 @@ This phase adds the ability for JavaScript code to programmatically trigger widg
   - Return success/failure through the Promise
   - **Completed**: Added `updateWidgetFromJS` AsyncFunction in `VoltraModule.kt:178-203` that validates JSON, writes to SharedPreferences via `widgetManager.writeWidgetData()`, triggers refresh via `widgetManager.updateWidget()`, and returns `{success: true}` or `{success: false, error: string}`
 
-- [ ] Create TypeScript wrapper for widget updates:
+- [x] Create TypeScript wrapper for widget updates:
   - Add `updateWidget(widgetId: string, payload: WidgetPayload)` function in `src/android/module.ts`
   - Type the payload properly to match existing widget data structures
   - Handle serialization to JSON before passing to native
+  - **Completed**: Added `updateAndroidWidgetFromJS(widgetId, payload)` function in `src/android/widgets/api.ts:268-274`. Created types `AndroidWidgetPayload` and `UpdateAndroidWidgetFromJSResult`. Added `updateWidgetFromJS` to `VoltraModuleSpec` in `src/VoltraModule.ts:159-166`. Exported from `src/android/widgets/index.ts` and `src/android/client.ts`. Also exported `renderAndroidWidgetToJson` utility for creating payloads from JSX. Added 5 unit tests in `src/android/widgets/__tests__/update-widget-from-js.node.test.ts`.
 
 - [ ] Implement a widget update subscription system:
   - Add `subscribeToWidgetActions(widgetId: string, callback: (action: WidgetAction) => void)` in TypeScript

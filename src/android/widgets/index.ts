@@ -3,16 +3,24 @@ export {
   clearAllAndroidWidgets,
   clearAndroidWidget,
   getActiveWidgets,
+  getLastTriggeredAction,
   reloadAndroidWidgets,
   requestPinAndroidWidget,
   updateAndroidWidget,
+  updateAndroidWidgetFromJS,
 } from './api.js'
 
-// Android Widget Types
+// Renderer utilities (for converting JSX to payload for updateAndroidWidgetFromJS)
+export { renderAndroidWidgetToJson, renderAndroidWidgetToString } from './renderer.js'
+
+// Android Widget Types (re-exported from api.js which aggregates all types)
 export type {
+  AndroidWidgetPayload,
   AndroidWidgetSize,
   AndroidWidgetSizeVariant,
   AndroidWidgetVariants,
+  TriggeredActionInfo,
+  UpdateAndroidWidgetFromJSResult,
   UpdateAndroidWidgetOptions,
   WidgetInfo,
-} from './types.js'
+} from './api.js'

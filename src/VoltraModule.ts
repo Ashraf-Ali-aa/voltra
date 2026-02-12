@@ -157,6 +157,20 @@ export interface VoltraModuleSpec {
   } | null>
 
   /**
+   * Android Widget: Update a widget with raw JSON payload from JavaScript.
+   * This is used for programmatic updates triggered by JS code, separate from
+   * the JSX-based updateAndroidWidget flow.
+   *
+   * @param widgetId - The widget identifier
+   * @param jsonPayload - Pre-serialized JSON string containing widget data
+   * @returns Promise that resolves to success/error result
+   */
+  updateWidgetFromJS(
+    widgetId: string,
+    jsonPayload: string
+  ): Promise<{ success: boolean; error?: string }>
+
+  /**
    * Android Widget: Request to pin a widget to the home screen
    *
    * See: https://developer.android.com/develop/ui/compose/glance/pin-in-app
