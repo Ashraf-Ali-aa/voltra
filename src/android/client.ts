@@ -22,10 +22,12 @@ export {
   clearAllAndroidWidgets,
   clearAndroidWidget,
   getActiveWidgets,
+  getLastTriggeredAction,
   reloadAndroidWidgets,
   requestPinAndroidWidget,
   updateAndroidWidget,
 } from './widgets/api.js'
+export type { TriggeredActionInfo } from './widgets/api.js'
 export type {
   AndroidWidgetSize,
   AndroidWidgetSizeVariant,

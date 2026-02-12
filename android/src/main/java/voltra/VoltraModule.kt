@@ -10,6 +10,7 @@ import expo.modules.kotlin.modules.ModuleDefinition
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import voltra.events.VoltraEventBus
 import voltra.images.VoltraImageManager
 import voltra.widget.VoltraGlanceWidget
@@ -18,6 +19,8 @@ import voltra.widget.VoltraWidgetManager
 class VoltraModule : Module() {
     companion object {
         private const val TAG = "VoltraModule"
+        private const val PREFS_NAME = "voltra_widgets"
+        private const val KEY_LAST_ACTION_PREFIX = "Voltra_Widget_LastAction_"
     }
 
     private val notificationManager by lazy {
@@ -170,6 +173,39 @@ class VoltraModule : Module() {
                 }
 
                 Log.d(TAG, "clearAllAndroidWidgets completed")
+            }
+
+            AsyncFunction("getLastTriggeredAction") { widgetId: String ->
+                Log.d(TAG, "getLastTriggeredAction called with widgetId=$widgetId")
+
+                val context = appContext.reactContext ?: return@AsyncFunction null
+                val prefs = context.getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE)
+                val key = "$KEY_LAST_ACTION_PREFIX$widgetId"
+                val actionJson = prefs.getString(key, null)
+
+                if (actionJson == null) {
+                    Log.d(TAG, "No last action found for widgetId=$widgetId")
+                    return@AsyncFunction null
+                }
+
+                // Clear the stored action after reading (one-time read pattern)
+                prefs.edit().remove(key).commit()
+
+                // Parse the JSON and return as a map
+                try {
+                    val jsonObject = JSONObject(actionJson)
+                    val result =
+                        mapOf(
+                            "actionName" to jsonObject.getString("actionName"),
+                            "componentId" to jsonObject.getString("componentId"),
+                            "timestamp" to jsonObject.getLong("timestamp"),
+                        )
+                    Log.d(TAG, "Returning last action for widgetId=$widgetId: $result")
+                    result
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to parse last action JSON: $actionJson", e)
+                    null
+                }
             }
 
             AsyncFunction("getActiveWidgets") {

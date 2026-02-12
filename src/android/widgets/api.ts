@@ -164,3 +164,49 @@ export const requestPinAndroidWidget = async (
 export const getActiveWidgets = async (): Promise<WidgetInfo[]> => {
   return VoltraModule.getActiveWidgets()
 }
+
+/**
+ * Information about the last triggered action on a widget.
+ */
+export type TriggeredActionInfo = {
+  /** The action name that was triggered (from the actionName prop) */
+  actionName: string
+  /** The component ID that triggered the action */
+  componentId: string
+  /** Unix timestamp in milliseconds when the action was triggered */
+  timestamp: number
+}
+
+/**
+ * Get the last triggered action for a widget.
+ *
+ * When a button with `actionType="refresh"` is pressed, the action info is stored.
+ * This function retrieves and clears that stored action (one-time read pattern).
+ *
+ * Use this in your widget update function to determine which button was pressed
+ * and perform different updates accordingly.
+ *
+ * @param widgetId - The widget identifier
+ * @returns Promise that resolves to the action info or null if no action was triggered
+ *
+ * @example
+ * ```typescript
+ * const action = await getLastTriggeredAction('myWidget')
+ * if (action) {
+ *   switch (action.actionName) {
+ *     case 'increment':
+ *       count += 1
+ *       break
+ *     case 'decrement':
+ *       count -= 1
+ *       break
+ *     case 'reset':
+ *       count = 0
+ *       break
+ *   }
+ * }
+ * ```
+ */
+export const getLastTriggeredAction = async (widgetId: string): Promise<TriggeredActionInfo | null> => {
+  return VoltraModule.getLastTriggeredAction(widgetId)
+}

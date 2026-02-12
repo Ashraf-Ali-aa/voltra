@@ -8,22 +8,32 @@ import androidx.glance.appwidget.action.ActionCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import voltra.widget.VoltraWidgetManager
 
 /**
  * ActionCallback that refreshes a Voltra widget without opening the app.
  * This enables interactive widget updates where a button click triggers
  * a widget data refresh cycle.
+ *
+ * The action stores information about which button was pressed (actionName, componentId)
+ * in SharedPreferences, allowing the JavaScript side to retrieve this information
+ * and perform different updates based on which action was triggered.
  */
 class VoltraRefreshAction : ActionCallback {
     companion object {
         private const val TAG = "VoltraRefreshAction"
+        private const val PREFS_NAME = "voltra_widgets"
+        private const val KEY_LAST_ACTION_PREFIX = "Voltra_Widget_LastAction_"
 
         /** Parameter key for passing the widget ID to the callback */
         val WIDGET_ID_KEY = ActionParameters.Key<String>("widgetId")
 
         /** Parameter key for passing the component ID to the callback */
         val COMPONENT_ID_KEY = ActionParameters.Key<String>("componentId")
+
+        /** Parameter key for passing the action name to the callback */
+        val ACTION_NAME_KEY = ActionParameters.Key<String>("actionName")
     }
 
     override suspend fun onAction(
@@ -33,13 +43,17 @@ class VoltraRefreshAction : ActionCallback {
     ) {
         val widgetId = parameters[WIDGET_ID_KEY]
         val componentId = parameters[COMPONENT_ID_KEY]
+        val actionName = parameters[ACTION_NAME_KEY] ?: componentId
 
-        Log.d(TAG, "onAction triggered: widgetId=$widgetId, componentId=$componentId, glanceId=$glanceId")
+        Log.d(TAG, "onAction triggered: widgetId=$widgetId, componentId=$componentId, actionName=$actionName, glanceId=$glanceId")
 
         if (widgetId == null) {
             Log.w(TAG, "No widgetId provided in action parameters, cannot refresh")
             return
         }
+
+        // Store the triggered action info in SharedPreferences
+        storeLastAction(context, widgetId, actionName, componentId)
 
         // Launch widget update in IO coroutine scope
         CoroutineScope(Dispatchers.IO).launch {
@@ -52,5 +66,31 @@ class VoltraRefreshAction : ActionCallback {
                 Log.e(TAG, "Failed to refresh widget widgetId=$widgetId: ${e.message}", e)
             }
         }
+    }
+
+    /**
+     * Store the last triggered action info in SharedPreferences.
+     * This allows JavaScript to retrieve which action was triggered.
+     */
+    private fun storeLastAction(
+        context: Context,
+        widgetId: String,
+        actionName: String?,
+        componentId: String?,
+    ) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val actionInfo =
+            JSONObject().apply {
+                put("actionName", actionName ?: componentId ?: "unknown")
+                put("componentId", componentId ?: "unknown")
+                put("timestamp", System.currentTimeMillis())
+            }
+
+        prefs
+            .edit()
+            .putString("$KEY_LAST_ACTION_PREFIX$widgetId", actionInfo.toString())
+            .commit()
+
+        Log.d(TAG, "Stored last action for widgetId=$widgetId: $actionInfo")
     }
 }

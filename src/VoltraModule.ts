@@ -143,6 +143,20 @@ export interface VoltraModuleSpec {
   clearAllAndroidWidgets(): Promise<void>
 
   /**
+   * Android Widget: Get the last triggered action for a widget.
+   * Returns the action info (actionName, componentId, timestamp) if an action was triggered,
+   * or null if no action was triggered. Clears the stored action after reading (one-time read).
+   *
+   * @param widgetId - The widget identifier
+   * @returns Promise that resolves to the action info or null
+   */
+  getLastTriggeredAction(widgetId: string): Promise<{
+    actionName: string
+    componentId: string
+    timestamp: number
+  } | null>
+
+  /**
    * Android Widget: Request to pin a widget to the home screen
    *
    * See: https://developer.android.com/develop/ui/compose/glance/pin-in-app

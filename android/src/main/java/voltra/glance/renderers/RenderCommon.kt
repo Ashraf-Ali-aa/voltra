@@ -35,14 +35,16 @@ fun getOnClickAction(
 ): Action {
     val actionType = props?.get("actionType") as? String
     val deepLinkUrl = props?.get("deepLinkUrl") as? String
+    val actionName = props?.get("actionName") as? String ?: componentId
 
     // Handle refresh action type - triggers widget refresh without opening the app
     if (actionType == "refresh") {
-        Log.d(TAG, "Creating refresh action for widgetId=$widgetId, componentId=$componentId")
+        Log.d(TAG, "Creating refresh action for widgetId=$widgetId, componentId=$componentId, actionName=$actionName")
         return actionRunCallback<VoltraRefreshAction>(
             actionParametersOf(
                 VoltraRefreshAction.WIDGET_ID_KEY to widgetId,
                 VoltraRefreshAction.COMPONENT_ID_KEY to componentId,
+                VoltraRefreshAction.ACTION_NAME_KEY to actionName,
             ),
         )
     }

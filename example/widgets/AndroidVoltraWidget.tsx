@@ -2,7 +2,7 @@ import { VoltraAndroid } from 'voltra/android'
 
 type AndroidVoltraWidgetProps = {
   time: string
-  /** Counter that increments on each widget refresh */
+  /** Counter value to display */
   count?: number
 }
 
@@ -22,14 +22,31 @@ export const AndroidVoltraWidget = ({ time, count = 0 }: AndroidVoltraWidgetProp
       <VoltraAndroid.Spacer style={{ height: 12 }} />
       <VoltraAndroid.Text>Launched: {time}</VoltraAndroid.Text>
       <VoltraAndroid.Spacer style={{ height: 8 }} />
-      <VoltraAndroid.Text style={{ fontSize: 14, color: '#666666' }}>Refresh count: {count}</VoltraAndroid.Text>
+      <VoltraAndroid.Text style={{ fontSize: 24, fontWeight: 'bold' }}>Count: {count}</VoltraAndroid.Text>
       <VoltraAndroid.Spacer style={{ height: 12 }} />
-      <VoltraAndroid.FilledButton
-        text="Refresh Widget"
-        actionType="refresh"
-        backgroundColor="#3B82F6"
-        contentColor="#FFFFFF"
-      />
+      <VoltraAndroid.Row style={{ gap: 8 }}>
+        <VoltraAndroid.FilledButton
+          text="-"
+          actionType="refresh"
+          actionName="decrement"
+          backgroundColor="#EF4444"
+          contentColor="#FFFFFF"
+        />
+        <VoltraAndroid.FilledButton
+          text="Reset"
+          actionType="refresh"
+          actionName="reset"
+          backgroundColor="#6B7280"
+          contentColor="#FFFFFF"
+        />
+        <VoltraAndroid.FilledButton
+          text="+"
+          actionType="refresh"
+          actionName="increment"
+          backgroundColor="#22C55E"
+          contentColor="#FFFFFF"
+        />
+      </VoltraAndroid.Row>
     </VoltraAndroid.Column>
   )
 }
