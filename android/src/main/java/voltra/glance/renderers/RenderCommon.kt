@@ -10,11 +10,14 @@ import androidx.glance.GlanceModifier
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
+import androidx.glance.action.actionParametersOf
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.layout.ContentScale
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import voltra.glance.LocalVoltraRenderContext
+import voltra.glance.actions.VoltraRefreshAction
 import voltra.images.VoltraImageManager
 import voltra.models.VoltraElement
 import voltra.models.VoltraNode
@@ -30,8 +33,21 @@ fun getOnClickAction(
     widgetId: String,
     componentId: String,
 ): Action {
+    val actionType = props?.get("actionType") as? String
     val deepLinkUrl = props?.get("deepLinkUrl") as? String
 
+    // Handle refresh action type - triggers widget refresh without opening the app
+    if (actionType == "refresh") {
+        Log.d(TAG, "Creating refresh action for widgetId=$widgetId, componentId=$componentId")
+        return actionRunCallback<VoltraRefreshAction>(
+            actionParametersOf(
+                VoltraRefreshAction.WIDGET_ID_KEY to widgetId,
+                VoltraRefreshAction.COMPONENT_ID_KEY to componentId,
+            ),
+        )
+    }
+
+    // Handle deepLink action type or default behavior with deepLinkUrl
     if (deepLinkUrl != null && deepLinkUrl.isNotEmpty()) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLinkUrl))
         intent.setPackage(context.packageName)
